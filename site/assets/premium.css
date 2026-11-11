@@ -50,3 +50,32 @@ body{background:var(--off);font-family:'DM Sans',Arial,sans-serif;color:var(--in
 @media(max-width:860px){.detail-jumpinner{overflow-x:auto;scrollbar-width:none;gap:22px;padding:0 0;min-height:63px}.detail-jumpinner::-webkit-scrollbar{display:none}.detail-jumpinner>span{display:none}.detail-jumpinner>a{flex:none}.detail-jumpinner .detail-jump-cta{margin-left:auto}.sidebox{position:static}}
 @media(max-width:520px){.detail-jumpinner{gap:16px}.detail-jumpinner>a{font-size:10px}.detail-jumpinner .detail-jump-cta{padding:10px 13px}.detail-picture:hover{transform:none}.detail-hero .detail-layout h1{font-size:clamp(36px,9.4vw,52px)}}
 @media(prefers-reduced-motion:reduce){.detail-motion-line,.detail-motion-dot,.detail-motion-halo{animation:none!important}}
+
+/* Proteus header claro: contraste da marca e navegação (2026-11-11) */
+.header{
+  background:rgba(231,233,235,.97);
+  color:#142334;
+  border-bottom:1px solid #d4d8dd;
+  box-shadow:0 8px 24px rgba(16,27,39,.08);
+  -webkit-backdrop-filter:blur(22px);
+  backdrop-filter:blur(22px);
+}
+.header .brand-label strong{color:#142334}
+.header .brand-label small{color:#735726}
+.header .brand-mark{filter:drop-shadow(0 1px 0 rgba(255,255,255,.3))}
+.header nav a{color:#213248}
+.header nav a:hover,.header nav a:focus-visible{color:#a63847}
+.header .nav-cta{background:#142334;color:#fff;border:1px solid #142334}
+.header .nav-cta:hover{background:#263d56;color:#fff;border-color:#263d56}
+.header .menu-toggle span{background:#142334}
+.footer .brand-label strong{color:#fff}
+.footer .brand-label small{color:#e0ba75}
+@media(max-width:900px){
+  .header nav{
+    background:#e7e9eb;
+    box-shadow:0 18px 34px rgba(16,27,39,.15);
+    border-top:1px solid #d4d8dd;
+  }
+  .header nav a{color:#213248;border-bottom:1px solid #d1d6db}
+  .header nav a:hover{color:#a63847}
+}
