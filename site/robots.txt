@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://proteus-engenharia.vercel.app/sitemap.xml

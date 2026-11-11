@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "cleanUrls": false,
+  "rewrites": [
+    {
+      "source": "/imagens/engenharia-eletrica-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/14319099/pexels-photo-14319099.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/instalacoes-eletricas-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/10871585/pexels-photo-10871585.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/instalacao-de-aparelhos-eletricos-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/21812146/pexels-photo-21812146.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/manutencao-eletrica-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/33694019/pexels-photo-33694019.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/eletricista-industrial-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/33706880/pexels-photo-33706880.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/telecomunicacoes-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/cameras-de-seguranca-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/14746839/pexels-photo-14746839.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/controle-de-acesso-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/6682880/pexels-photo-6682880.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/redes-de-internet-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/5073493/pexels-photo-5073493.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/cerca-eletrica-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/8548353/pexels-photo-8548353.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/som-ambiente-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/6487954/pexels-photo-6487954.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/automacao-residencial-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/6487966/pexels-photo-6487966.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/alarmes-de-incendio-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/7425340/pexels-photo-7425340.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    },
+    {
+      "source": "/imagens/manutencao-de-computadores-servico-ilustrativo.jpg",
+      "destination": "https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1200"
+    }
+  ]
+}
