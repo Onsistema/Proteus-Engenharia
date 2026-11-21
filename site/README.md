@@ -1,28 +1,19 @@
-# Proteus Instalações e Projetos — site institucional
+# Proteus Instalações e Projetos — site
 
-Site estático, com páginas independentes para cada serviço, acessível em https://proteus-engenharia.vercel.app.
+Site estático publicado na Vercel (projeto **proteus-engenharia**, pasta raiz `site`). Cada push na `main` publica automaticamente.
 
-## Edição
+## Como editar
 
-- Edite `index.html` para a página inicial.
-- Edite `servicos/<slug>/index.html` para páginas de serviços.
-- Edite `assets/styles.css` para estilos e `assets/main.js` para o formulário e menu.
-- As fotos são **ilustrativas**, disponibilizadas pelo Pexels. Consulte a licença em https://www.pexels.com/license/ .
-- Cada imagem é servida por um endereço com nome descritivo `imagens/<slug>-servico-ilustrativo.jpg`; a regra em `vercel.json` redireciona a origem Pexels. As imagens não representam trabalhos executados pela Proteus.
-- Ajuste o domínio canônico em títulos/metadados, `sitemap.xml` e `robots.txt` ao adotar domínio próprio.
+As páginas são geradas por `tools/build.py`. Não edite os HTML à mão: edite o conteúdo e gere de novo.
 
-## Publicação
+- `tools/content.py`: dados da empresa, domínio (`BASE`), serviços novos e regiões atendidas.
+- `tools/data/services.json`: textos das páginas de serviço.
+- `tools/posts.py`: artigos do blog (markdown simples).
+- `tools/photos.py`: fotos reais (Instagram) e onde cada uma aparece. Arquivos em `site/fotos/`.
+- `site/assets/site.css` e `site/assets/site.js`: visual e comportamento.
 
-O projeto Vercel **proteus-engenharia**, vinculado ao GitHub `Onsistema/Proteus-Engenharia`, usa a pasta **site** como raiz do projeto. Alterações publicadas na branch main acionam a implantação Git conectada.
+Depois de editar: `python3 tools/build.py` e faça commit da pasta `site`.
 
-## SEO
+## Domínio próprio
 
-- 1 página inicial + 14 páginas de serviço, com conteúdo próprio.
-- URLs permanentes, títulos e descrições individuais, links internos, dados estruturados Service, Electrician e BreadcrumbList.
-- Imagens com nomes descritivos e textos alternativos.
-- Sitemap em `/sitemap.xml`; envie-o ao Google Search Console quando tiver acesso à propriedade.
-- Não usar nomes de cidades sem atendimento real; a área descrita atualmente é Campinas e região.
-
-## Dados confirmados
-
-Telefone: (19) 97141-8256 • abertura: abril de 2019 • atendimento no endereço do cliente, sem loja física para visita pública.
+Ao ativar o domínio, troque `BASE` em `tools/content.py`, rode o build e configure o domínio na Vercel com redirecionamento do endereço `.vercel.app`.
