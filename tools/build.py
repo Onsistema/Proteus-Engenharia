@@ -90,7 +90,7 @@ def org():
         "telephone": PHONE_E164, "foundingDate": "2019-04",
         "description": "Engenharia elétrica, instalações, câmeras de segurança, controle de acesso, cerca elétrica, redes e carregadores para carro elétrico em Campinas e região.",
         "address": {"@type": "PostalAddress", "addressLocality": "Campinas", "addressRegion": "SP", "addressCountry": "BR"},
-        "areaServed": [{"@type": "City", "name": n} for n in ["Campinas", "Valinhos", "Paulínia"]] +
+        "areaServed": [{"@type": "City", "name": n} for n in ["Campinas", "Valinhos", "Vinhedo", "Paulínia", "Sumaré", "Hortolândia", "Indaiatuba"]] +
                       [{"@type": "Place", "name": f"{n}, Campinas"} for n in ["Cambuí", "Barão Geraldo", "Taquaral"]],
         "openingHoursSpecification": [
             {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "07:00", "closes": "19:00"},
@@ -173,7 +173,7 @@ def contact_section(preset=""):
 <p class="lead" style="margin-top:18px">A gente responde pelo WhatsApp com as próximas etapas: perguntas, fotos que ajudam ou uma visita, se for o caso.</p>
 <div class="contact-lines">
 <a href="{wa("Olá, Proteus!")}" target="_blank" rel="noopener">{I["wa"]}{PHONE} (WhatsApp)</a>
-<span>{I["pin"]}Campinas, Valinhos, Paulínia e região, no seu endereço</span>
+<span>{I["pin"]}Campinas, Valinhos, Vinhedo, Paulínia, Sumaré, Hortolândia, Indaiatuba e região</span>
 <span>{I["clock"]}Seg a sex, 7h às 19h · Sáb, 9h às 12h</span>
 </div></div>
 <form class="form" id="quote-form" novalidate>
@@ -424,8 +424,8 @@ def page_area(a):
 
 def page_areas_index():
     items = [("Início", "/"), ("Onde atendemos", "/atendimento/")]
-    body = head("Onde a Proteus atende: Campinas, Valinhos, Paulínia e região",
-                "A Proteus atende no endereço do cliente em Campinas (Cambuí, Barão Geraldo, Taquaral e demais bairros), Valinhos e Paulínia.",
+    body = head("Onde a Proteus atende: Campinas, Valinhos, Vinhedo, Sumaré, Hortolândia, Indaiatuba e região",
+                "A Proteus atende no endereço do cliente em Campinas (Cambuí, Barão Geraldo, Taquaral e demais bairros), Valinhos, Vinhedo, Paulínia, Sumaré, Hortolândia e Indaiatuba.",
                 "/atendimento/", schemas=[org(), crumbs_schema(items)]) + header("atendimento")
     body += f'''<section class="page-hero"><div class="wrap">{breadcrumb_html(items)}
 <h1>Onde atendemos.</h1><p class="lead">Todo atendimento é feito no endereço do cliente. Estas são as regiões onde mais trabalhamos.</p></div>{small_wires()}</section>
