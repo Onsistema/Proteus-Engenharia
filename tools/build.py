@@ -144,7 +144,7 @@ def head(title, desc, path, image=None, schemas=(), og_type="website", body=""):
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif&display=swap">
-<link rel="stylesheet" href="/assets/site.css?v=4">{js}</head><body class="{body}">
+<link rel="stylesheet" href="/assets/site.css?v=5">{js}</head><body class="{body}">
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>'''
 
 def header(active=""):
