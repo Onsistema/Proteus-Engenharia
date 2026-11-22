@@ -36,8 +36,31 @@ AR = {a["slug"]: a for a in AREAS}
 PO = {p["slug"]: p for p in POSTS}
 POSTS_SORTED = sorted(POSTS, key=lambda p: p["date"], reverse=True)
 
+IMG = {  # fotos de alta resolução (Pexels, uso livre) em site/img
+    "instalacoes-eletricas": "cove2", "manutencao-eletrica": "cove", "engenharia-eletrica": "projeto",
+    "carregador-veicular": "ev", "instalacao-de-aparelhos-eletricos": "cove2", "cameras-de-seguranca": "casa",
+    "controle-de-acesso": "hero2", "cerca-eletrica": "muro", "alarmes-de-incendio": "alarme",
+    "automacao-residencial": "painel", "som-ambiente": "pool2",
+    "area:campinas": "hero", "area:cambui": "cove2", "area:barao-geraldo": "casa", "area:taquaral": "cove",
+    "area:valinhos": "pool", "area:paulinia": "projeto2", "area:vinhedo": "pool2", "area:sumare": "muro",
+    "area:hortolandia": "projeto2", "area:indaiatuba": "hero2",
+}
+ALTS = {"hero": "Fachada de casa moderna iluminada à noite", "hero2": "Entrada de residência contemporânea com iluminação embutida",
+    "cove": "Sala com iluminação indireta embutida no forro", "cove2": "Ambiente integrado com sanca de LED",
+    "muro": "Fachada de casa moderna com muro e portão de madeira", "ev": "Carro elétrico carregando em wallbox residencial",
+    "ev2": "Wallbox instalado na parede da garagem", "pool": "Casa contemporânea com piscina iluminada ao entardecer",
+    "pool2": "Residência com área externa e iluminação de paisagismo", "painel": "Painel touch de automação residencial",
+    "alarme": "Central de alarme instalada na parede", "projeto": "Planta de projeto sobre a mesa", "projeto2": "Arquitetos revisando projeto no escritório",
+    "casa": "Casa moderna iluminada ao anoitecer"}
+
+def hi(key):
+    n = IMG.get(key, key)
+    return {"src": f"/img/{n}.jpg", "alt": ALTS.get(n, ""), "real": False}
+
 def photo(key, fallback_slug=None):
-    """Foto real se existir; senão a ilustrativa do serviço."""
+    """Foto de alta resolução se houver; senão foto real; senão a ilustrativa."""
+    if key in IMG:
+        return hi(key)
     if key in PHOTOS:
         return PHOTOS[key]
     slug = fallback_slug or key
@@ -108,39 +131,40 @@ def faq_schema(faqs):
         {"@type": "Question", "name": f["q"], "acceptedAnswer": {"@type": "Answer", "text": f["a"]}} for f in faqs]}
 
 # ---------- layout ----------
-def head(title, desc, path, image=None, schemas=(), og_type="website"):
+def head(title, desc, path, image=None, schemas=(), og_type="website", body=""):
     url = BASE + path
     img = image if image and image.startswith("http") else BASE + (image or "/assets/og.jpg")
     js = "".join(f'<script type="application/ld+json">{json.dumps(s, ensure_ascii=False)}</script>' for s in schemas)
     return f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name="description" content="{E(desc)}"><link rel="canonical" href="{url}">
-<meta name="theme-color" content="#18212b"><meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#141518"><meta name="robots" content="index,follow,max-image-preview:large">
 <meta property="og:type" content="{og_type}"><meta property="og:locale" content="pt_BR"><meta property="og:site_name" content="Proteus Instalações e Projetos">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{img}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="/assets/site.css?v=3">{js}</head><body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif&display=swap">
+<link rel="stylesheet" href="/assets/site.css?v=4">{js}</head><body class="{body}">
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>'''
 
 def header(active=""):
     cols = ""
     for g, label, _ in GROUPS:
         links = "".join(f'<a href="/servicos/{s["slug"]}/">{E(s["short"])}</a>' for s in services if s["group"] == g)
-        cols += f'<div><h4><i class="c-{g}"></i>{label}</h4>{links}</div>'
+        cols += f'<div><h4>{label}</h4>{links}</div>'
     cur = lambda k: ' aria-current="page"' if active == k else ""
     return f'''<header class="top"><div class="wrap top-row">
 <a class="brand" href="/" aria-label="Proteus Instalações e Projetos, página inicial"><img src="/assets/mark.svg" alt="" width="40" height="44"><span><b>Proteus</b><small>Instalações e Projetos</small></span></a>
 <nav class="nav" id="nav" aria-label="Principal">
 <div class="drop"><button type="button" aria-expanded="false" aria-controls="mega">Serviços {I["chev"]}</button><div class="mega" id="mega">{cols}<a class="all" href="/servicos/">Ver todos os serviços</a></div></div>
-<a href="/trabalhos/"{cur("trabalhos")}>Trabalhos</a>
+<a href="/trabalhos/"{cur("trabalhos")}>Obras</a>
+<a href="/#arquitetos">Arquitetos</a>
 <a href="/atendimento/"{cur("atendimento")}>Onde atendemos</a>
 <a href="/blog/"{cur("blog")}>Blog</a>
 <a href="/#contato">Contato</a>
 <a class="btn wa mobile-cta" style="display:none" href="{wa("Olá, Proteus! Gostaria de um orçamento.")}" target="_blank" rel="noopener">{I["wa"]}Chamar no WhatsApp</a>
 </nav>
-<a class="btn" href="{wa("Olá, Proteus! Gostaria de um orçamento.")}" target="_blank" rel="noopener">Pedir orçamento</a>
+<a class="btn" href="{wa("Olá, Proteus! Gostaria de um orçamento.")}" target="_blank" rel="noopener">Solicitar orçamento</a>
 <button class="menu-btn" type="button" aria-label="Abrir menu" aria-controls="nav" aria-expanded="false"><span></span></button>
 </div></header><main id="conteudo">'''
 
@@ -160,7 +184,7 @@ def footer():
 <div class="foot-bottom"><span>© {YEAR} Proteus Instalações e Projetos · Campinas, SP</span><span><a href="/blog/">Blog</a> · <a href="/sitemap.xml">Mapa do site</a></span></div>
 </div></footer>
 <a class="wa-float" href="{wa("Olá, Proteus! Encontrei vocês pelo site e gostaria de um orçamento.")}" target="_blank" rel="noopener" aria-label="Conversar no WhatsApp">{I["wa"]}<span>WhatsApp</span></a>
-<script src="/assets/site.js?v=3" defer></script></body></html>'''
+<script src="/assets/site.js?v=4" defer></script></body></html>'''
 
 def faq_block(faqs):
     return '<div class="faq">' + "".join(
@@ -168,9 +192,9 @@ def faq_block(faqs):
 
 def contact_section(preset=""):
     opts = "".join(f'<option{" selected" if s["name"] == preset else ""}>{E(s["name"])}</option>' for s in services) + "<option>Outro serviço</option>"
-    return f'''<section class="sec contact" id="contato"><div class="wrap contact-grid">
-<div><h2>Conte o que você precisa.</h2>
-<p class="lead" style="margin-top:18px">A gente responde pelo WhatsApp com as próximas etapas: perguntas, fotos que ajudam ou uma visita, se for o caso.</p>
+    return f'''<section class="sec contact on-dark" id="contato"><div class="wrap contact-grid">
+<div><span class="label">Contato</span><h2>Vamos conversar sobre o seu projeto.</h2>
+<p class="lead">A gente responde pelo WhatsApp com as próximas etapas: perguntas, fotos que ajudam ou uma visita, se for o caso.</p>
 <div class="contact-lines">
 <a href="{wa("Olá, Proteus!")}" target="_blank" rel="noopener">{I["wa"]}{PHONE} (WhatsApp)</a>
 <span>{I["pin"]}Campinas, Valinhos, Vinhedo, Paulínia, Sumaré, Hortolândia, Indaiatuba e região</span>
@@ -236,20 +260,28 @@ def slugify(t):
     return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
 
 # ---------- blocos reutilizáveis ----------
-def panel_html(subset=None):
+def discipline_cards(subset=None, img_keys=None):
+    blurbs = {"ele": "Projeto, instalação e manutenção com dimensionamento correto, quadros organizados e infraestrutura pronta para o futuro.",
+              "seg": "Cerca elétrica, câmeras e controle de acesso planejados para proteger sem poluir a fachada.",
+              "tec": "Rede que alcança todos os ambientes, automação, iluminação de cena e som ambiente."}
+    imgs = img_keys or {"ele": "cove2", "seg": "muro", "tec": "painel"}
+    titles = {"ele": "Elétrica e iluminação", "seg": "Segurança", "tec": "Tecnologia e automação"}
     out = ""
-    for g, label, _ in GROUPS:
+    for g, _, _ in GROUPS:
         items = [s for s in services if s["group"] == g and (subset is None or s["slug"] in subset)]
         if not items: continue
-        rows = "".join(f'<a class="breaker" href="/servicos/{s["slug"]}/"><code>{codes[s["slug"]]}</code><span><b>{E(s["short"])}</b><small>{E(s["blurb"])}</small></span>{I["arrow"]}</a>' for s in items)
-        out += f'<div class="circuit"><div class="circuit-h"><i class="c-{g}"></i><h3>{label}</h3><span>{len(items)} {"serviço" if len(items)==1 else "serviços"}</span></div>{rows}</div>'
-    return f'<div class="panel">{out}</div>'
+        li = "".join(f'<li><a href="/servicos/{s["slug"]}/">{E(s["short"])}{I["arrow"]}</a></li>' for s in items)
+        out += f'''<div class="discipline"><div class="ph">{img_tag(hi(imgs[g]), w=800, h=1000)}</div>
+<h3>{titles[g]}</h3><p>{blurbs[g]}</p><ul>{li}</ul></div>'''
+    return f'<div class="disciplines">{out}</div>'
+
+panel_html = lambda subset=None: discipline_cards(subset)
 
 def post_cards(posts):
     out = ""
     for p in posts:
-        ph = photo("post:" + p["slug"], p["cover"])
-        out += f'''<a class="post" href="/blog/{p["slug"]}/"><div class="ph">{img_tag(ph, w=640, h=400)}</div>
+        ph = photo(p["cover"])
+        out += f'''<a class="post" href="/blog/{p["slug"]}/"><div class="ph">{img_tag(ph, w=720, h=480)}</div>
 <small>{p["cat"]} · {p["read"]} min de leitura</small><h3>{E(p["title"])}</h3><p>{E(p["desc"])}</p></a>'''
     return f'<div class="posts">{out}</div>'
 
@@ -261,86 +293,100 @@ def area_cards(slugs):
         out += f'<a class="area" href="/atendimento/{s}/"><span>{E(a["name"])}<small>{sub}</small></span>{I["arrow"]}</a>'
     return out
 
-def works_grid(limit=None, classes=True):
+def works_grid(limit=None, cls="works"):
     items = WORKS[:limit] if limit else WORKS
     if not items: return ""
-    pattern = ["tall", "", "", "wide", "", "", "wide", "", ""]
-    out = ""
-    for i, w in enumerate(items):
-        c = pattern[i % len(pattern)] if classes else ""
-        out += f'<figure class="{c}">{img_tag(w, w=640, h=640)}<figcaption>{E(w["caption"])}</figcaption></figure>'
-    return f'<div class="works">{out}</div>'
+    return f'<div class="{cls}">' + "".join(f'<figure>{img_tag(w, w=600, h=800)}<figcaption>{E(w["caption"])}</figcaption></figure>' for w in items) + '</div>'
 
-# ---------- páginas ----------
+def reel(codes):
+    items = [w for c in codes for w in WORKS if w["src"].endswith(c + ".jpg")]
+    return '<div class="reel">' + "".join(f'<figure>{img_tag(w, w=600, h=800)}<figcaption>{E(w["caption"])}</figcaption></figure>' for w in items) + '</div>'
+
+def page_hero(items, title, lead, img=None, cta=None):
+    bg = f'<div class="bg">{img_tag(img, eager=True, w=1800, h=900)}</div>' if img else ""
+    cls = "page-hero" + ("" if img else " plain")
+    ctah = f'<div class="hero-cta">{cta}</div>' if cta else ""
+    return f'''<section class="{cls}">{bg}<div class="in"><div class="wrap">{breadcrumb_html(items)}
+<h1>{E(title)}</h1><p class="lead">{lead}</p>{ctah}</div></div></section>'''
+
 def page_home():
-    hp = [photo("home:1", "cameras-de-seguranca"), photo("home:2", "controle-de-acesso"), photo("home:3", "instalacoes-eletricas")]
-    figs = "".join(f'<figure>{img_tag(p, eager=(i==0), w=640, h=800 if i==0 else 400)}</figure>' for i, p in enumerate(hp))
-    works = works_grid(9)
-    works_sec = f'''<section class="sec" id="trabalhos"><div class="wrap">
-<div class="sec-head"><h2>Trabalhos que a gente fez.</h2><p>Fotos reais de instalações em casas, condomínios e empresas de Campinas e região.</p></div>
-{works}<div class="works-foot"><a class="textlink" href="/trabalhos/">Ver todos os trabalhos</a><a class="textlink" href="{INSTAGRAM}" target="_blank" rel="noopener">Acompanhar no Instagram</a></div>
-</div></section>''' if works else ""
-    about_p = photo("home:about", "engenharia-eletrica")
     home_faqs = [
-        {"q": "Vocês atendem residências, condomínios e empresas?", "a": "Sim. Atendemos casas, apartamentos, condomínios, lojas, clínicas, escritórios e indústrias em Campinas e região."},
-        {"q": "Como funciona o orçamento?", "a": "Você conta o que precisa pelo WhatsApp, de preferência com fotos. Para serviços simples, já passamos uma estimativa. Para os maiores, agendamos uma visita técnica."},
-        {"q": "A Proteus tem loja ou endereço para visita?", "a": "Não. Todo atendimento é feito no endereço do cliente, com horário combinado."},
-        {"q": "Posso pedir mais de um serviço junto?", "a": "Pode e vale a pena. Elétrica, câmeras, rede e controle de acesso planejados juntos ficam mais organizados e costumam sair mais em conta."},
-        {"q": "Quem faz o serviço?", "a": "A Proteus é conduzida por um engenheiro eletricista com experiência em segurança do trabalho, com equipe própria de instalação."},
+        {"q": "Vocês trabalham junto com arquitetos e construtoras?", "a": "Sim. Recebemos o projeto, compatibilizamos elétrica, iluminação, rede e segurança com o arquitetônico e seguimos o cronograma da obra até a entrega."},
+        {"q": "Vocês atendem residências, condomínios e empresas?", "a": "Sim. Casas, apartamentos, condomínios, lojas, clínicas, escritórios e indústrias em Campinas e região."},
+        {"q": "Como funciona o orçamento?", "a": "Você conta o que precisa pelo WhatsApp, de preferência com fotos ou com o projeto. Para serviços maiores, fazemos visita técnica antes de fechar o escopo."},
+        {"q": "Cerca elétrica precisa de manutenção?", "a": "Sim. Vegetação encostando, isoladores quebrados e fios frouxos causam alarmes falsos e perda de eficiência. Uma revisão periódica mantém a cerca funcionando e dentro das normas."},
+        {"q": "A Proteus tem loja ou endereço para visita?", "a": "Não. Todo atendimento é feito no endereço do cliente ou na obra, com horário combinado."},
     ]
     schemas = [org(), faq_schema(home_faqs), {"@context": "https://schema.org", "@type": "WebSite", "name": "Proteus Instalações e Projetos", "url": BASE + "/"}]
-    body = head("Eletricista, câmeras e segurança eletrônica em Campinas | Proteus",
-                "Engenheiro eletricista em Campinas: instalações e manutenção elétrica, câmeras de segurança, controle de acesso, cerca elétrica, redes e carregador para carro elétrico. Orçamento pelo WhatsApp.",
-                "/", schemas=schemas) + header()
-    body += f'''<section class="hero"><div class="wrap hero-grid">
-<div><span class="kicker">Engenharia elétrica e segurança eletrônica em Campinas</span>
-<h1>Elétrica, câmeras e redes com engenheiro responsável.</h1>
-<p class="lead">Da tomada que esquenta ao carregador do carro elétrico, das câmeras do condomínio à rede do escritório. Um só responsável técnico, trabalho limpo e explicação clara do que está sendo feito.</p>
-<div class="hero-cta"><a class="btn wa" href="{wa("Olá, Proteus! Gostaria de um orçamento.")}" target="_blank" rel="noopener">{I["wa"]}Pedir orçamento no WhatsApp</a><a class="btn ghost" href="#servicos">Ver serviços</a></div>
-<div class="proof"><span><span class="stars" aria-hidden="true">★★★★★</span> <b>{RATING}</b> no Google ({REVIEWS} avaliações)</span><span><b>Desde {SINCE}</b> em Campinas e região</span></div>
-</div>
-<div class="hero-photos">{figs}</div>
-</div>{hero_wires()}</section>
-<section class="strip" aria-label="Diferenciais"><div class="wrap">
-<div><b>Engenheiro responsável</b>Projeto e execução com critério técnico</div>
-<div><b>No seu endereço</b>Campinas, Valinhos, Paulínia e região</div>
-<div><b>Orçamento rápido</b>Pelo WhatsApp, com fotos do local</div>
-<div><b>Tudo integrado</b>Elétrica, segurança e rede num só projeto</div>
-</div></section>
-<section class="sec mist" id="servicos"><div class="wrap">
-<div class="sec-head"><h2>O que a gente instala e mantém.</h2><p>Organizado como um quadro de distribuição: cada circuito é uma área, cada disjuntor é um serviço. Clique para ver os detalhes.</p></div>
-{panel_html()}
-</div></section>
-{works_sec}
-<section class="sec{" mist" if works else ""}"><div class="wrap">
-<div class="sec-head"><h2>Como funciona o atendimento.</h2><p>Sem mistério e sem surpresa no meio da obra.</p></div>
-<div class="steps">
-<div class="step"><em>1</em><h3>Você conta o que precisa</h3><p>Pelo WhatsApp, com fotos do local e do problema. Já dá para tirar boa parte das dúvidas.</p></div>
-<div class="step"><em>2</em><h3>Avaliamos e orçamos</h3><p>Para serviços maiores, fazemos visita técnica. Você recebe o escopo e o valor antes de começar.</p></div>
-<div class="step"><em>3</em><h3>Executamos e explicamos</h3><p>Instalação limpa, testada, e você entende como usar e o que foi feito.</p></div>
+    W = wa("Olá, Proteus! Gostaria de um orçamento.")
+    body = head("Engenharia elétrica, cerca elétrica e segurança em Campinas | Proteus",
+                "Engenharia elétrica, iluminação, cerca elétrica, câmeras, controle de acesso, automação e carregador para carro elétrico em Campinas e região. Parceira de arquitetos e construtoras.",
+                "/", schemas=schemas, body="home") + header()
+    body += f'''<section class="hero"><div class="hero-bg">{img_tag(hi("hero"), eager=True, w=2000, h=1333)}</div>
+<div class="hero-in"><div class="wrap">
+<span class="label" style="color:var(--brass-l)">Campinas e região, desde {SINCE}</span>
+<h1>A infraestrutura que a arquitetura não deixa aparecer.</h1>
+<p class="lead">Elétrica, iluminação, segurança e automação para residências de alto padrão, condomínios e empresas. Projeto com engenheiro responsável e acabamento à altura do seu projeto.</p>
+<div class="hero-cta"><a class="btn brass" href="{W}" target="_blank" rel="noopener">Solicitar orçamento</a><a class="btn line-light" href="#arquitetos">Para arquitetos</a></div>
+<div class="hero-foot"><span><span class="stars" aria-hidden="true">★★★★★</span> <b>{RATING}</b> no Google, {REVIEWS} avaliações</span><span>Engenheiro responsável em cada obra</span><span>Campinas, Valinhos, Vinhedo, Indaiatuba e região</span></div>
 </div></div></section>
-<section class="sec"><div class="wrap about">
-<div class="about-photo">{img_tag(about_p, w=640, h=800)}</div>
-<div><span class="kicker">Sobre a Proteus</span><h2>Formação em engenharia, olho de quem cuida de segurança.</h2>
-<p class="lead" style="margin-top:18px">A Proteus nasceu em 2019, em Campinas, da experiência de um engenheiro eletricista com formação em segurança do trabalho.</p>
-<p style="margin-top:14px;color:var(--ink-2)">Isso muda o jeito de trabalhar: antes de instalar, a gente entende a carga, o quadro, o caminho do cabo e o risco envolvido. O resultado é uma instalação que funciona hoje e continua funcionando daqui a dez anos.</p>
-<ul>
-<li>{I["check"]}Dimensionamento correto de cabos, disjuntores e proteções</li>
-<li>{I["check"]}Infraestrutura organizada, sem fio pendurado nem emenda escondida</li>
-<li>{I["check"]}Elétrica, câmeras, acesso e rede pensados juntos</li>
-</ul>
-<a class="btn ghost" href="/atendimento/">Ver onde atendemos</a></div>
+
+<section class="sec"><div class="wrap intro">
+<div><span class="label">A Proteus</span><h2>Quando a elétrica é bem feita, ninguém repara. Só sente o conforto, a segurança e a luz no lugar certo.</h2></div>
+<div class="intro-side"><p class="lead">Somos uma empresa de engenharia elétrica e sistemas de Campinas. Cuidamos de tudo o que passa pela parede: energia, iluminação, rede, câmeras, cerca elétrica, controle de acesso e automação.</p>
+<p style="margin-top:18px">Trabalhamos com critério técnico e cuidado com o acabamento: cabos dimensionados, quadros identificados, infraestrutura embutida e nada de fio aparente estragando o projeto.</p>
+<div class="facts"><div><b>{SINCE}</b><span>atendendo Campinas e região</span></div><div><b>{RATING}</b><span>nota no Google, {REVIEWS} avaliações</span></div><div><b>{len(services)}</b><span>especialidades sob um só responsável</span></div></div>
+</div></div></section>
+
+<section class="sec stone" id="servicos"><div class="wrap">
+<div class="sec-head"><div><span class="label">Especialidades</span><h2>Três disciplinas, um único responsável técnico.</h2></div><p>Planejar elétrica, segurança e tecnologia juntas evita retrabalho, economiza na obra e deixa o resultado mais limpo.</p></div>
+{discipline_cards()}
 </div></section>
-<section class="sec mist"><div class="wrap">
-<div class="sec-head"><h2>Onde atendemos.</h2><p>Atendimento no endereço do cliente em Campinas e cidades vizinhas.</p></div>
+
+<section class="feature"><div class="feature-ph">{img_tag(hi("muro"), w=1400, h=934)}</div>
+<div class="feature-tx"><span class="label">Segurança perimetral</span><h2>Cerca elétrica instalada com técnica e discrição.</h2>
+<p class="lead">A primeira barreira da casa precisa funcionar todos os dias e combinar com a fachada. Instalamos, integramos ao alarme e mantemos a cerca dentro das normas.</p>
+<ul class="ticks"><li>Central certificada, aterramento próprio e placas de advertência conforme a Lei 13.477/2017</li><li>Integração com alarme, sirene e aviso no celular</li><li>Hastes e fios alinhados ao desenho do muro</li><li>Manutenção preventiva: poda, isoladores, tensão e aterramento</li></ul>
+<div class="row"><a class="btn" href="/servicos/cerca-eletrica/">Conhecer o serviço</a><a class="btn line" href="{wa("Olá, Proteus! Gostaria de orçamento para cerca elétrica.")}" target="_blank" rel="noopener">Orçar cerca elétrica</a></div></div></section>
+
+<section class="feature rev on-dark"><div class="feature-ph">{img_tag(hi("ev"), w=1400, h=933)}</div>
+<div class="feature-tx"><span class="label">Mobilidade elétrica</span><h2>Carregador para carro elétrico em casa ou no condomínio.</h2>
+<p class="lead">Avaliamos o padrão de entrada e o quadro, dimensionamos o circuito e instalamos o wallbox de qualquer marca, com proteção completa.</p>
+<ul class="ticks"><li>BYD, Volvo, Porsche, GWM e outras marcas</li><li>Circuito exclusivo com disjuntor e DR</li><li>Apoio na aprovação junto ao condomínio</li></ul>
+<div class="row"><a class="btn brass" href="/servicos/carregador-veicular/">Saiba mais</a></div></div></section>
+
+<section class="feature" id="arquitetos"><div class="feature-ph">{img_tag(hi("projeto2"), w=1400, h=933)}</div>
+<div class="feature-tx"><span class="label">Para arquitetos e construtoras</span><h2>Um parceiro técnico que respeita o seu projeto.</h2>
+<p class="lead">Entramos cedo na obra para que elétrica, luminotécnica, rede e segurança cheguem prontas para o acabamento, sem improviso e sem surpresa para o seu cliente.</p>
+<ul class="ticks"><li>Compatibilização com o projeto arquitetônico e luminotécnico</li><li>Infraestrutura embutida para automação, som, câmeras e wallbox</li><li>Cronograma alinhado às outras frentes da obra</li><li>Comunicação direta com o engenheiro responsável</li></ul>
+<div class="row"><a class="btn" href="{wa("Olá, Proteus! Sou arquiteto(a) e gostaria de conversar sobre um projeto.")}" target="_blank" rel="noopener">Falar sobre um projeto</a></div></div></section>
+
+<section class="sec dark on-dark" id="trabalhos"><div class="wrap">
+<div class="sec-head"><div><span class="label">Do canteiro</span><h2>Obras recentes.</h2></div><p>Registros feitos pela equipe durante as instalações. Mais no nosso Instagram.</p></div>
+{reel(["C2FuAUQx2uC", "CdbsR9lglt2", "B2xC8ibFQ1Y", "C2P3LykAl_z", "Cvvu8NbsRw1", "CSFSiO5FNCY"])}
+<div class="reel-foot"><a class="textlink" href="/trabalhos/">Ver todas as obras</a><a class="textlink" href="{INSTAGRAM}" target="_blank" rel="noopener">@proteus_engenharia</a></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+<div class="sec-head"><div><span class="label">Como trabalhamos</span><h2>Do primeiro contato à entrega.</h2></div></div>
+<div class="steps">
+<div class="step"><em>Primeiro</em><h3>Entendimento</h3><p>Você envia fotos, plantas ou o projeto. Tiramos as dúvidas e definimos se é preciso uma visita técnica.</p></div>
+<div class="step"><em>Depois</em><h3>Escopo e proposta</h3><p>Você recebe o que será feito, materiais, prazo e valor, antes de qualquer obra começar.</p></div>
+<div class="step"><em>Por fim</em><h3>Execução e entrega</h3><p>Instalação limpa e testada. Explicamos o funcionamento e deixamos tudo identificado.</p></div>
+</div></div></section>
+
+<section class="sec stone"><div class="wrap">
+<div class="sec-head"><div><span class="label">Atendimento</span><h2>Onde atendemos.</h2></div><p>Sempre no endereço do cliente ou na obra.</p></div>
 <div class="areas">{area_cards([a["slug"] for a in AREAS])}</div>
 </div></section>
+
 <section class="sec"><div class="wrap">
-<div class="sec-head"><h2>Do blog.</h2><a class="textlink" href="/blog/">Ver todos os artigos</a></div>
+<div class="sec-head"><div><span class="label">Blog</span><h2>Para decidir com segurança.</h2></div><p><a class="textlink" href="/blog/">Todos os artigos</a></p></div>
 {post_cards(POSTS_SORTED[:3])}
 </div></section>
-<section class="sec mist"><div class="wrap">
-<div class="sec-head"><h2>Perguntas frequentes.</h2></div>{faq_block(home_faqs)}
+
+<section class="sec stone"><div class="wrap">
+<div class="sec-head"><div><span class="label">Dúvidas</span><h2>Perguntas frequentes.</h2></div></div>{faq_block(home_faqs)}
 </div></section>
 {contact_section()}'''
     write("/", body + footer())
@@ -348,29 +394,24 @@ def page_home():
 def page_service(s):
     path = f'/servicos/{s["slug"]}/'
     p = photo(s["slug"])
-    alt_p = dict(p);
-    if not p.get("real", True) is False: pass
     items = [("Início", "/"), ("Serviços", "/servicos/"), (s["short"], path)]
     faqs = s["faqs"] + [{"q": t["q"], "a": t["a"]} for t in s["topics"] if t["q"].endswith("?")][:2]
     schemas = [org(), {"@context": "https://schema.org", "@type": "Service", "name": s["name"], "serviceType": s["name"], "description": s["desc"],
                "provider": {"@id": BASE + "/#empresa"}, "areaServed": org()["areaServed"], "url": BASE + path},
                crumbs_schema(items), faq_schema(faqs)]
     gallery = [w for w in WORKS if s["slug"] in w.get("services", [])][:6]
-    gal_html = ('<h2>Trabalhos realizados</h2><div class="gallery">' + "".join(f'<figure>{img_tag(w, w=400, h=400)}</figure>' for w in gallery) + '</div>') if gallery else ""
+    gal_html = ('<h2>Registros de obra</h2><div class="gallery">' + "".join(f'<figure>{img_tag(w, w=400, h=400)}</figure>' for w in gallery) + '</div>') if gallery else ""
     topics = "".join(f'<h3>{E(t["q"])}</h3><p>{E(t["a"])}</p>' for t in s["topics"])
     rel_posts = [x for x in POSTS_SORTED if s["slug"] in x["services"]][:3]
-    rel_posts_html = ('<div class="box"><h3>Artigos relacionados</h3><ul>' + "".join(f'<li><a href="/blog/{x["slug"]}/">{E(x["title"])}</a></li>' for x in rel_posts) + '</ul></div>') if rel_posts else ""
+    rel_posts_html = ('<div class="box"><h3>Leia também</h3><ul>' + "".join(f'<li><a href="/blog/{x["slug"]}/">{E(x["title"])}</a></li>' for x in rel_posts) + '</ul></div>') if rel_posts else ""
     same = [x for x in services if x["group"] == s["group"] and x["slug"] != s["slug"]][:5]
     same_html = '<div class="box"><h3>Outros serviços</h3><ul>' + "".join(f'<li><a href="/servicos/{x["slug"]}/">{E(x["short"])}</a></li>' for x in same) + '</ul></div>'
     areas_links = ", ".join(f'<a href="/atendimento/{a["slug"]}/">{E(a["name"])}</a>' for a in AREAS)
-    label = "Foto ilustrativa" if not p.get("real") else ""
-    body = head(s["title"], s["desc"], path, image=p["src"] if p.get("real") else None, schemas=schemas) + header()
-    body += f'''<section class="page-hero"><div class="wrap">{breadcrumb_html(items)}<div class="page-hero-grid">
-<div><h1>{E(s["h1"])}</h1><p class="lead">{E(s["lead"])}</p>
-<div class="hero-cta"><a class="btn wa" href="{wa(f"Olá, Proteus! Gostaria de orçamento para {s['name']}.")}" target="_blank" rel="noopener">{I["wa"]}Pedir orçamento</a><a class="btn ghost" href="#detalhes">Entender o serviço</a></div></div>
-<figure class="page-hero-photo" style="margin:0">{img_tag(p if p.get("real") else dict(p, alt=s["img_alt"]), eager=True, w=800, h=640)}</figure>
-</div></div>{small_wires()}</section>
-<section class="sec" id="detalhes"><div class="wrap layout">
+    W = wa(f"Olá, Proteus! Gostaria de orçamento para {s['name']}.")
+    hero_img = p if p["src"].startswith("/img/") else (p if p.get("real") else dict(p, alt=s["img_alt"]))
+    body = head(s["title"], s["desc"], path, image=hero_img["src"], schemas=schemas) + header()
+    body += page_hero(items, s["h1"], E(s["lead"]), hero_img, f'<a class="btn brass" href="{W}" target="_blank" rel="noopener">Solicitar orçamento</a><a class="btn line-light" href="#detalhes">Entender o serviço</a>')
+    body += f'''<section class="sec" id="detalhes"><div class="wrap layout">
 <article class="prose">
 <h2>{E(s["h2"])}</h2>{"".join(f"<p>{E(x)}</p>" for x in s["intro"])}
 <h3>O que entra no serviço</h3><ul class="checks">{"".join(f"<li>{I['check']}<span>{E(c)}</span></li>" for c in s["checks"])}</ul>
@@ -378,11 +419,11 @@ def page_service(s):
 {gal_html}
 <h2>{E(s["guide_h2"])}</h2><p>{E(s["guide_intro"])}</p>{topics}
 <h2>Perguntas frequentes</h2>{faq_block(s["faqs"])}
-<p style="margin-top:28px">Atendemos em {areas_links} e região.{(" " + label + ".") if label else ""}</p>
+<p style="margin-top:28px">Atendemos em {areas_links} e região.</p>
 </article>
 <aside class="aside">
-<div class="box dark"><h3>Precisa desse serviço?</h3><p>Mande fotos do local e uma descrição rápida. Respondemos com as próximas etapas.</p>
-<a class="btn wa" href="{wa(f"Olá, Proteus! Gostaria de orçamento para {s['name']}.")}" target="_blank" rel="noopener">{I["wa"]}Falar no WhatsApp</a></div>
+<div class="box dark"><h3>Vamos conversar?</h3><p>Envie fotos, plantas ou uma descrição rápida. Respondemos com as próximas etapas.</p>
+<a class="btn wa" href="{W}" target="_blank" rel="noopener">{I["wa"]}Falar no WhatsApp</a></div>
 {rel_posts_html}{same_html}
 </aside></div></section>
 {contact_section(s["name"])}'''
@@ -390,12 +431,11 @@ def page_service(s):
 
 def page_services_index():
     items = [("Início", "/"), ("Serviços", "/servicos/")]
-    body = head("Serviços de elétrica, segurança eletrônica e redes em Campinas | Proteus",
-                "Todos os serviços da Proteus em Campinas e região: instalações e manutenção elétrica, carregador veicular, câmeras, controle de acesso, cerca elétrica, alarme de incêndio, redes e automação.",
+    body = head("Serviços de engenharia elétrica, segurança e automação em Campinas | Proteus",
+                "Instalações e manutenção elétrica, iluminação, carregador veicular, cerca elétrica, câmeras, controle de acesso, alarme de incêndio, redes e automação em Campinas e região.",
                 "/servicos/", schemas=[org(), crumbs_schema(items)]) + header()
-    body += f'''<section class="page-hero"><div class="wrap">{breadcrumb_html(items)}
-<h1>Serviços.</h1><p class="lead">{len(services)} serviços em três áreas: elétrica, segurança e tecnologia. Planejados para funcionar juntos.</p></div>{small_wires()}</section>
-<section class="sec mist"><div class="wrap">{panel_html()}</div></section>{contact_section()}'''
+    body += page_hero(items, "Especialidades.", f"{len(services)} serviços em três disciplinas, planejados para funcionar juntos.")
+    body += f'<section class="sec"><div class="wrap">{discipline_cards()}</div></section>{contact_section()}'
     write("/servicos/", body + footer())
 
 def page_area(a):
@@ -404,21 +444,16 @@ def page_area(a):
     schemas = [org(), crumbs_schema(items), faq_schema(a["faqs"]),
                {"@context": "https://schema.org", "@type": "Service", "name": f"Instalações elétricas e segurança eletrônica em {a['name']}",
                 "provider": {"@id": BASE + "/#empresa"}, "areaServed": {"@type": "Place", "name": a["name"]}, "url": BASE + path}]
-    p = photo("area:" + a["slug"], a["focus"][0])
+    W = wa(f"Olá, Proteus! Estou em {a['name']} e gostaria de um orçamento.")
     body = head(a["title"], a["desc"], path, schemas=schemas) + header("atendimento")
-    body += f'''<section class="page-hero"><div class="wrap">{breadcrumb_html(items)}<div class="page-hero-grid">
-<div><h1>{E(a["h1"])}</h1><p class="lead">{E(a["lead"])}</p>
-<div class="hero-cta"><a class="btn wa" href="{wa(f"Olá, Proteus! Estou em {a['name']} e gostaria de um orçamento.")}" target="_blank" rel="noopener">{I["wa"]}Pedir orçamento em {E(a["name"])}</a></div></div>
-<figure class="page-hero-photo" style="margin:0">{img_tag(p, eager=True, w=800, h=640)}</figure>
-</div></div>{small_wires()}</section>
-<section class="sec"><div class="wrap layout"><article class="prose">
+    body += page_hero(items, a["h1"], E(a["lead"]), photo("area:" + a["slug"]), f'<a class="btn brass" href="{W}" target="_blank" rel="noopener">Orçamento em {E(a["name"])}</a>')
+    body += f'''<section class="sec"><div class="wrap layout"><article class="prose">
 <h2>Atendimento em {E(a["name"])}</h2>{"".join(f"<p>{E(x)}</p>" for x in a["body"])}
-<h2>Serviços mais procurados em {E(a["name"])}</h2>
-</article><aside class="aside"><div class="box dark"><h3>Atendimento no local</h3><p>Seg a sex, 7h às 19h. Sáb, 9h às 12h. Mande fotos pelo WhatsApp para adiantar o orçamento.</p>
-<a class="btn wa" href="{wa(f"Olá, Proteus! Estou em {a['name']}.")}" target="_blank" rel="noopener">{I["wa"]}{PHONE}</a></div></aside></div>
-<div class="wrap" style="margin-top:8px">{panel_html(a["focus"])}</div></section>
-<section class="sec mist"><div class="wrap"><div class="sec-head"><h2>Perguntas sobre {E(a["name"])}.</h2></div>{faq_block(a["faqs"])}
-<div class="sec-head" style="margin:64px 0 24px"><h2 style="font-size:var(--step2)">Também atendemos</h2></div><div class="areas">{area_cards(a["near"])}</div></div></section>
+</article><aside class="aside"><div class="box dark"><h3>No seu endereço</h3><p>Seg a sex, 7h às 19h. Sáb, 9h às 12h. Envie fotos pelo WhatsApp para adiantar o orçamento.</p>
+<a class="btn wa" href="{W}" target="_blank" rel="noopener">{I["wa"]}{PHONE}</a></div></aside></div></section>
+<section class="sec stone"><div class="wrap"><div class="sec-head"><div><span class="label">Em {E(a["name"])}</span><h2>Serviços mais procurados.</h2></div></div>{discipline_cards(a["focus"])}</div></section>
+<section class="sec"><div class="wrap"><div class="sec-head"><div><span class="label">Dúvidas</span><h2>Perguntas sobre {E(a["name"])}.</h2></div></div>{faq_block(a["faqs"])}
+<div style="margin-top:80px"><span class="label">Também atendemos</span><div class="areas">{area_cards(a["near"])}</div></div></div></section>
 {contact_section()}'''
     write(path, body + footer())
 
@@ -427,10 +462,9 @@ def page_areas_index():
     body = head("Onde a Proteus atende: Campinas, Valinhos, Vinhedo, Sumaré, Hortolândia, Indaiatuba e região",
                 "A Proteus atende no endereço do cliente em Campinas (Cambuí, Barão Geraldo, Taquaral e demais bairros), Valinhos, Vinhedo, Paulínia, Sumaré, Hortolândia e Indaiatuba.",
                 "/atendimento/", schemas=[org(), crumbs_schema(items)]) + header("atendimento")
-    body += f'''<section class="page-hero"><div class="wrap">{breadcrumb_html(items)}
-<h1>Onde atendemos.</h1><p class="lead">Todo atendimento é feito no endereço do cliente. Estas são as regiões onde mais trabalhamos.</p></div>{small_wires()}</section>
-<section class="sec mist"><div class="wrap"><div class="areas">{area_cards([a["slug"] for a in AREAS])}</div>
-<p class="muted" style="margin-top:28px">Também atendemos outros bairros de Campinas, como Centro, Jardim das Paineiras, Chácara da Barra, Jardim Flamboyant, Botafogo, Jardim Guanabara e Jardim do Trevo. Está em outra cidade da região? Pergunte pelo WhatsApp.</p></div></section>
+    body += page_hero(items, "Onde atendemos.", "Todo atendimento é feito no endereço do cliente ou na obra.", hi("pool"))
+    body += f'''<section class="sec"><div class="wrap"><div class="areas">{area_cards([a["slug"] for a in AREAS])}</div>
+<p style="margin-top:32px;color:var(--ink-3)">Também atendemos outros bairros de Campinas, como Centro, Jardim das Paineiras, Chácara da Barra, Jardim Flamboyant, Botafogo, Jardim Guanabara e Jardim do Trevo. Está em outra cidade da região? Pergunte pelo WhatsApp.</p></div></section>
 {contact_section()}'''
     write("/atendimento/", body + footer())
 
@@ -438,18 +472,17 @@ def page_blog_index():
     items = [("Início", "/"), ("Blog", "/blog/")]
     schema = {"@context": "https://schema.org", "@type": "Blog", "name": "Blog da Proteus", "url": BASE + "/blog/",
               "blogPost": [{"@type": "BlogPosting", "headline": p["title"], "url": BASE + f'/blog/{p["slug"]}/', "datePublished": p["date"]} for p in POSTS_SORTED]}
-    body = head("Blog da Proteus: elétrica, segurança eletrônica e redes",
-                "Guias práticos sobre instalação elétrica, câmeras de segurança, controle de acesso, cerca elétrica, carregador de carro elétrico e redes, escritos por engenheiro eletricista.",
+    body = head("Blog da Proteus: elétrica, segurança eletrônica e automação",
+                "Guias práticos sobre instalação elétrica, cerca elétrica, câmeras, controle de acesso, carregador de carro elétrico e redes, escritos por engenheiro eletricista.",
                 "/blog/", schemas=[org(), crumbs_schema(items), schema]) + header("blog")
-    body += f'''<section class="page-hero"><div class="wrap">{breadcrumb_html(items)}
-<h1>Blog.</h1><p class="lead">Guias práticos para decidir melhor antes de contratar: preço, normas, tecnologia e manutenção.</p></div>{small_wires()}</section>
-<section class="sec"><div class="wrap">{post_cards(POSTS_SORTED)}</div></section>{contact_section()}'''
+    body += page_hero(items, "Blog.", "Guias práticos para decidir melhor antes de contratar: preço, normas, tecnologia e manutenção.")
+    body += f'<section class="sec"><div class="wrap">{post_cards(POSTS_SORTED)}</div></section>{contact_section()}'
     write("/blog/", body + footer())
 
 def page_post(p):
     path = f'/blog/{p["slug"]}/'
     items = [("Início", "/"), ("Blog", "/blog/"), (p["title"], path)]
-    cover = photo("post:" + p["slug"], p["cover"])
+    cover = photo(p["cover"])
     content = md(p["body"])
     toc = re.findall(r'<h2 id="(.+?)">(.+?)</h2>', content)
     toc_html = '<div class="box toc"><h3>Neste artigo</h3>' + "".join(f'<a href="#{i}">{re.sub("<.+?>","",t)}</a>' for i, t in toc) + '</div>'
@@ -460,31 +493,28 @@ def page_post(p):
     dtxt = f"{d.day} de {months[d.month-1]} de {d.year}"
     schema = {"@context": "https://schema.org", "@type": "BlogPosting", "headline": p["title"], "description": p["desc"],
               "datePublished": p["date"], "dateModified": p["date"], "inLanguage": "pt-BR", "mainEntityOfPage": BASE + path,
-              "image": (cover["src"] if cover["src"].startswith("http") else BASE + cover["src"]),
-              "author": {"@type": "Organization", "name": "Proteus Instalações e Projetos", "url": BASE + "/"},
+              "image": BASE + cover["src"], "author": {"@type": "Organization", "name": "Proteus Instalações e Projetos", "url": BASE + "/"},
               "publisher": {"@id": BASE + "/#empresa"}}
     others = [x for x in POSTS_SORTED if x["slug"] != p["slug"]][:3]
-    body = head(p["title"] + " | Proteus", p["desc"], path, image=cover["src"] if cover.get("real") else None,
-                schemas=[org(), crumbs_schema(items), schema], og_type="article") + header("blog")
+    body = head(p["title"] + " | Proteus", p["desc"], path, image=cover["src"], schemas=[org(), crumbs_schema(items), schema], og_type="article") + header("blog")
     body += f'''<header class="article-head"><div class="wrap">{breadcrumb_html(items)}
-<h1>{E(p["title"])}</h1><div class="meta"><span>{p["cat"]}</span><span>{dtxt}</span><span>{p["read"]} min de leitura</span><span>Por Proteus Instalações e Projetos</span></div>
-<figure class="article-cover">{img_tag(cover, eager=True, w=1200, h=514)}</figure></div></header>
-<section class="sec" style="padding-top:56px"><div class="wrap layout"><article class="prose">{content}
-<div class="cta-band"><div><h2>Quer ajuda com isso?</h2><p>Mande fotos e uma descrição pelo WhatsApp. A gente responde com as próximas etapas.</p></div>
-<a class="btn light" href="{wa("Olá, Proteus! Li o artigo: " + p["title"])}" target="_blank" rel="noopener">{I["wa"]}Falar com a Proteus</a></div>
+<h1>{E(p["title"])}</h1><div class="meta"><span>{p["cat"]}</span><span>{dtxt}</span><span>{p["read"]} min de leitura</span><span>Por Proteus Instalações e Projetos</span></div></div></header>
+<figure class="article-cover">{img_tag(cover, eager=True, w=1800, h=686)}</figure>
+<section class="sec" style="padding-top:72px"><div class="wrap layout"><article class="prose">{content}
+<div class="cta-band"><div><h2>Quer ajuda com isso?</h2><p>Envie fotos ou o projeto pelo WhatsApp. Respondemos com as próximas etapas.</p></div>
+<a class="btn brass" href="{wa("Olá, Proteus! Li o artigo: " + p["title"])}" target="_blank" rel="noopener">Falar com a Proteus</a></div>
 </article><aside class="aside">{toc_html}{svc_html}</aside></div></section>
-<section class="sec mist"><div class="wrap"><div class="sec-head"><h2>Continue lendo.</h2><a class="textlink" href="/blog/">Todos os artigos</a></div>{post_cards(others)}</div></section>'''
+<section class="sec stone"><div class="wrap"><div class="sec-head"><div><span class="label">Blog</span><h2>Continue lendo.</h2></div></div>{post_cards(others)}</div></section>'''
     write(path, body + footer())
 
 def page_works():
     if not WORKS: return False
-    items = [("Início", "/"), ("Trabalhos", "/trabalhos/")]
-    body = head("Trabalhos realizados pela Proteus em Campinas e região",
-                "Fotos de instalações reais: carregadores de carro elétrico, câmeras, controle de acesso, automação, iluminação, alarmes e elétrica em Campinas e região.",
+    items = [("Início", "/"), ("Obras", "/trabalhos/")]
+    body = head("Obras e instalações da Proteus em Campinas e região",
+                "Registros de instalações feitas pela Proteus: carregadores de carro elétrico, câmeras, controle de acesso, automação, iluminação, alarmes e elétrica em Campinas e região.",
                 "/trabalhos/", schemas=[org(), crumbs_schema(items)]) + header("trabalhos")
-    body += f'''<section class="page-hero"><div class="wrap">{breadcrumb_html(items)}
-<h1>Trabalhos realizados.</h1><p class="lead">Fotos reais de instalações feitas pela Proteus. Tem mais no nosso <a class="textlink" href="{INSTAGRAM}" target="_blank" rel="noopener">Instagram</a>.</p></div>{small_wires()}</section>
-<section class="sec"><div class="wrap">{works_grid()}</div></section>{contact_section()}'''
+    body += page_hero(items, "Obras.", f'Registros feitos pela equipe durante as instalações. Tem mais no nosso <a class="textlink" href="{INSTAGRAM}" target="_blank" rel="noopener">Instagram</a>.')
+    body += f'<section class="sec"><div class="wrap">{works_grid()}</div></section>{contact_section()}'
     write("/trabalhos/", body + footer())
     return True
 
