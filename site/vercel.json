@@ -61,14 +61,14 @@
   ],
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "proteus-engenharia.vercel.app"
         }
       ],
-      "destination": "https://proteusengenharia.com.br/:path*",
+      "destination": "https://proteusengenharia.com.br/$1",
       "permanent": true
     }
   ]
