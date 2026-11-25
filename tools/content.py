@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Conteúdo do site da Proteus. Edite aqui e rode `python3 tools/build.py`."""
 
-BASE = "https://proteus-engenharia.vercel.app"  # trocar pelo domínio próprio quando estiver ativo
+BASE = "https://proteusengenharia.com.br"
 PHONE = "(19) 97141-8256"
 PHONE_E164 = "+5519971418256"
 WA = "5519971418256"

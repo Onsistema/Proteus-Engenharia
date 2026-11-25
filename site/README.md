@@ -16,4 +16,4 @@ Depois de editar: `python3 tools/build.py` e faça commit da pasta `site`.
 
 ## Domínio próprio
 
-Ao ativar o domínio, troque `BASE` em `tools/content.py`, rode o build e configure o domínio na Vercel com redirecionamento do endereço `.vercel.app`.
+Domínio ativo: proteusengenharia.com.br (DNS na Hostinger, registro A 76.76.21.21). Para mudar, troque `BASE` em `tools/content.py`, rode o build e configure o domínio na Vercel com redirecionamento do endereço `.vercel.app`.

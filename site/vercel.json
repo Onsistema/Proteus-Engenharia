@@ -58,5 +58,18 @@
       "source": "/imagens/manutencao-de-computadores-servico-ilustrativo.jpg",
       "destination": "https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1200"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "proteus-engenharia.vercel.app"
+        }
+      ],
+      "destination": "https://proteusengenharia.com.br/:path*",
+      "permanent": true
+    }
   ]
 }
